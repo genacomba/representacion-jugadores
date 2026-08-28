@@ -10,6 +10,7 @@ are simply omitted from the map rather than guessed at.
 """
 
 from django.db.models import Count
+from django_countries import countries as _countries
 
 from apps.clubs.models import Club
 from apps.contacts.models import Person
@@ -76,6 +77,62 @@ def city_aggregates(owner, categories=None):
             "breakdown": breakdown,
             "dominant_category": dominant_category,
         })
+    return results
+
+
+def country_aggregates(owner, categories=None):
+    """
+    Per-country totals for the flat "Mapa global" summary on Home — a
+    coarser, distinct view from city_aggregates' city-level breakdown used
+    by the 3D globe. Grouped directly by Person.current_country /
+    Club.country (not through City) so a contact still counts here even if
+    its city was never picked/geocoded, which matches "cantidad de
+    contactos por país" better than requiring a resolved city marker.
+    """
+    person_categories = _person_categories(categories)
+    include_clubs = categories is None or "club" in categories
+
+    breakdown_by_country = {}
+
+    if person_categories:
+        person_rows = (
+            Person.objects.filter(owner=owner, category__in=person_categories)
+            .exclude(current_country="")
+            .exclude(current_country__isnull=True)
+            .values("current_country", "category")
+            .annotate(n=Count("id"))
+        )
+        for row in person_rows:
+            code = str(row["current_country"])
+            bucket = breakdown_by_country.setdefault(code, {})
+            bucket[row["category"]] = bucket.get(row["category"], 0) + row["n"]
+
+    if include_clubs:
+        club_rows = (
+            Club.objects.filter(owner=owner)
+            .exclude(country="")
+            .exclude(country__isnull=True)
+            .values("country")
+            .annotate(n=Count("id"))
+        )
+        for row in club_rows:
+            code = str(row["country"])
+            bucket = breakdown_by_country.setdefault(code, {})
+            bucket["club"] = bucket.get("club", 0) + row["n"]
+
+    results = []
+    for code, breakdown in breakdown_by_country.items():
+        results.append({
+            "country": code,
+            # Resolved fresh per request (not cached at module import time):
+            # django-countries' translated names are lazy proxies, and
+            # caching them in a module-level dict evaluates them outside
+            # any request's i18n context, which produces mangled encoding.
+            "country_name": str(_countries.name(code)) or code,
+            "total": sum(breakdown.values()),
+            "breakdown": breakdown,
+        })
+    results.sort(key=lambda r: -r["total"])
     return results
 
 

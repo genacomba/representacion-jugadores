@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { emailLink, formatRelativeDate, instagramLink, phoneLink, whatsappLink } from "./format";
+import { emailLink, formatActivityTimestamp, formatRelativeDate, instagramLink, phoneLink, whatsappLink } from "./format";
+
+function isoDaysAgo(n, hours = 9, minutes = 21) {
+  const d = new Date();
+  d.setHours(hours, minutes, 0, 0);
+  d.setDate(d.getDate() - n);
+  return d.toISOString();
+}
 
 function daysAgo(n) {
   // Built from local date parts (not toISOString, which would convert to
@@ -66,5 +73,28 @@ describe("formatRelativeDate (last-contact display)", () => {
 
   it("shows months for anything under a year", () => {
     expect(formatRelativeDate(daysAgo(60))).toBe("Hace 2 meses");
+  });
+});
+
+describe("formatActivityTimestamp (Últimos movimientos feed)", () => {
+  it("returns an empty string when there is no timestamp", () => {
+    expect(formatActivityTimestamp(null)).toBe("");
+    expect(formatActivityTimestamp(undefined)).toBe("");
+  });
+
+  it("labels today's events as 'Hoy, HH:MM'", () => {
+    expect(formatActivityTimestamp(isoDaysAgo(0))).toMatch(/^Hoy, \d{2}:\d{2}$/);
+  });
+
+  it("labels yesterday's events as 'Ayer, HH:MM'", () => {
+    expect(formatActivityTimestamp(isoDaysAgo(1))).toMatch(/^Ayer, \d{2}:\d{2}$/);
+  });
+
+  it("shows days for anything under a week", () => {
+    expect(formatActivityTimestamp(isoDaysAgo(3))).toBe("Hace 3 días");
+  });
+
+  it("falls back to a short date beyond a week", () => {
+    expect(formatActivityTimestamp(isoDaysAgo(10))).toMatch(/^\d{2}\/\d{2}$/);
   });
 });

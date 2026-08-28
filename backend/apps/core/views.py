@@ -8,6 +8,7 @@ from apps.contacts.models import Person
 from apps.contacts.serializers import PersonListSerializer
 
 from .models import RecentView
+from .services import recent_activity
 
 
 class DashboardView(APIView):
@@ -58,4 +59,5 @@ class DashboardView(APIView):
             "recent": recent,
             "in_negotiation": PersonListSerializer(in_negotiation, many=True).data,
             "category_counts": category_counts,
+            "activity": recent_activity(owner),
         })

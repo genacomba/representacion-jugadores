@@ -16,6 +16,30 @@ export function formatRelativeDate(value) {
   return `Hace ${Math.floor(days / 365)} años`;
 }
 
+/** For full timestamps (e.g. the activity feed), unlike formatRelativeDate
+ * which only handles date-only strings ("YYYY-MM-DD"). Mirrors the
+ * reference's "Hoy, 09:21" / "Ayer, 19:30" style for recent events. */
+const pad2 = (n) => String(n).padStart(2, "0");
+
+export function formatActivityTimestamp(value) {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+
+  // Formatted by hand (24h, zero-padded) rather than via toLocaleTimeString:
+  // Intl's "es-AR" output for hour/month differs across Node/ICU builds and
+  // real browsers (12h with am/pm here, unpadded month there), which isn't
+  // worth chasing for a fixed "HH:MM" / "DD/MM" shape.
+  const time = `${pad2(date.getHours())}:${pad2(date.getMinutes())}`;
+  const startOfDay = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const days = Math.round((startOfDay(new Date()) - startOfDay(date)) / 86400000);
+
+  if (days <= 0) return `Hoy, ${time}`;
+  if (days === 1) return `Ayer, ${time}`;
+  if (days < 7) return `Hace ${days} días`;
+  return `${pad2(date.getDate())}/${pad2(date.getMonth() + 1)}`;
+}
+
 function digitsOnly(value = "") {
   return value.replace(/[^\d]/g, "");
 }

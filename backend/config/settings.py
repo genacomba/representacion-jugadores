@@ -1,5 +1,5 @@
 """
-Django settings for the Mercado de Pases backend.
+Django settings for the SCgroup backend.
 
 Configuration is driven by environment variables (see .env.example) so the
 same codebase runs against SQLite in local development and PostgreSQL in

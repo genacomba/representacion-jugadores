@@ -12,8 +12,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'apple-touch-icon.png'],
       manifest: {
-        name: 'Mercado de Pases',
-        short_name: 'Mercado de Pases',
+        name: 'SCgroup',
+        short_name: 'SCgroup',
         description: 'CRM privado para el mercado de pases del fútbol profesional',
         theme_color: '#0a0f0c',
         background_color: '#050705',

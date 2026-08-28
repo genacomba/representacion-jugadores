@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import { extractErrorMessage } from "../api/client";
 import Button from "../components/common/Button";
 import { Field, Input } from "../components/common/Field";
+import Brand from "../components/common/Brand";
 
 export default function Login() {
   const { login } = useAuth();
@@ -31,11 +32,9 @@ export default function Login() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-pitch-950 px-6">
       <div className="w-full max-w-sm">
-        <div className="mb-10 text-center">
-          <p className="font-serif text-3xl font-semibold tracking-wide text-gold-400">
-            Mercado de Pases
-          </p>
-          <p className="mt-2 text-sm text-ink-400">Acceso privado del representante</p>
+        <div className="mb-10 flex flex-col items-center text-center">
+          <Brand size="lg" tagline align="center" />
+          <p className="mt-3 text-sm text-ink-400">Acceso privado del representante</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">

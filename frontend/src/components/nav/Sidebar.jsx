@@ -1,6 +1,7 @@
 import { Home, Search, Plus, Globe2, Menu, LogOut } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import Brand from "../common/Brand";
 
 const ITEMS = [
   { to: "/", label: "Inicio", icon: Home, end: true },
@@ -16,8 +17,8 @@ export default function Sidebar() {
   return (
     <aside className="hidden w-64 shrink-0 flex-col border-r border-pitch-600/70 bg-pitch-900 md:flex">
       <div className="px-6 py-6">
-        <p className="font-serif text-lg font-semibold tracking-wide text-gold-400">Mercado de Pases</p>
-        <p className="mt-0.5 text-xs text-ink-400">CRM privado del representante</p>
+        <Brand size="sm" />
+        <p className="mt-2 text-xs text-ink-400">CRM privado del representante</p>
       </div>
       <nav className="flex-1 space-y-1 px-3">
         {ITEMS.map(({ to, label, icon: Icon, end }) => (

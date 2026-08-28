@@ -1,4 +1,4 @@
-# Mercado de Pases
+# SCgroup
 
 CRM privado para un representante de jugadores de fútbol profesional. No es una
 red social: no hay perfiles públicos, seguidores ni publicaciones. Es una
@@ -106,7 +106,15 @@ src/
 ```
 
 El globo 3D (`react-globe.gl` + `three.js`) se carga con `React.lazy()` sólo
-al entrar a `/mapa`, para no inflar el bundle inicial en un iPhone.
+al entrar a `/mapa`, para no inflar el bundle inicial en un iPhone. Home tiene
+además un mapa plano de resumen ("Mapa global", `components/home/WorldMapPreview.jsx`,
+también con `React.lazy()`) con los contactos agrupados por país — es una
+vista distinta y más liviana, no un reemplazo del globo. Sus datos
+(contorno de países + posición de cada marcador) están precalculados en
+`src/constants/worldMap.js` mediante `scripts/generate-world-map.mjs`
+(devDependencies `d3-geo`/`topojson-client`/`world-atlas`/`i18n-iso-countries`,
+no usadas en runtime); volver a ejecutarlo sólo si hiciera falta cambiar la
+resolución/proyección del mapa.
 
 ## Requisitos
 

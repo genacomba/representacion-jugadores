@@ -1,6 +1,6 @@
-export default function EmptyState({ icon: Icon, title, description, action }) {
+export default function EmptyState({ icon: Icon, title, description, action, className = "" }) {
   return (
-    <div className="flex flex-col items-center justify-center gap-3 px-6 py-14 text-center">
+    <div className={`flex flex-col items-center justify-center gap-3 px-6 py-14 text-center ${className}`}>
       {Icon && (
         <div className="flex h-14 w-14 items-center justify-center rounded-full bg-pitch-800 text-gold-400/80">
           <Icon size={26} strokeWidth={1.5} />
